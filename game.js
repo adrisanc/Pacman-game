@@ -14,6 +14,11 @@ let wallSpaceWidth = oneBlockSize / 1.5;
 let wallOffSet = (oneBlockSize - wallSpaceWidth) / 2;
 let wallInnerColor = "black";
 
+const DIRECTION_RIGHT = 4;
+const DIRECTION_UP = 3;
+const DIRECTION_LEFT = 2;
+const DIRECTION_BOTTON = 1;
+
 let map = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
@@ -46,12 +51,13 @@ let gameLoop = () => {
 };
 let update = () => {
   // todo
+  pacman.moveProcess();
 };
 
 let draw = () => {
-  // todo
   creaRect(0, 0, canvas.width, canvas.height, "black");
   drawWalls();
+  pacman.draw();
 };
 
 let gameInterval = setInterval(gameLoop, 1000 / fps);
@@ -77,34 +83,47 @@ let drawWalls = () => {
           );
         }
         if (j < map[0].length - 1 && map[i][j + 1] == 1) {
-            creaRect(
-                j * oneBlockSize + wallOffSet,
-                i * oneBlockSize + wallOffSet,
-                wallSpaceWidth + wallOffSet,
-                wallSpaceWidth,
-                wallInnerColor
-              );
+          creaRect(
+            j * oneBlockSize + wallOffSet,
+            i * oneBlockSize + wallOffSet,
+            wallSpaceWidth + wallOffSet,
+            wallSpaceWidth,
+            wallInnerColor
+          );
         }
 
         if (i > 0 && map[i - 1][j] == 1) {
-            creaRect(
-              j * oneBlockSize + wallOffSet,
-              i * oneBlockSize ,
-              wallSpaceWidth ,
-              wallSpaceWidth + wallOffSet,
-              wallInnerColor
-            );
-          }
-          if (i < map.length - 1 && map[i + 1][j] == 1) {
-              creaRect(
-                  j * oneBlockSize + wallOffSet,
-                  i * oneBlockSize + wallOffSet,
-                  wallSpaceWidth ,
-                  wallSpaceWidth + wallOffSet,
-                  wallInnerColor
-                );
-          }
+          creaRect(
+            j * oneBlockSize + wallOffSet,
+            i * oneBlockSize,
+            wallSpaceWidth,
+            wallSpaceWidth + wallOffSet,
+            wallInnerColor
+          );
+        }
+        if (i < map.length - 1 && map[i + 1][j] == 1) {
+          creaRect(
+            j * oneBlockSize + wallOffSet,
+            i * oneBlockSize + wallOffSet,
+            wallSpaceWidth,
+            wallSpaceWidth + wallOffSet,
+            wallInnerColor
+          );
+        }
       }
     }
   }
 };
+
+let createNewPacman = () => {
+  pacman = new Pacman(
+    oneBlockSize,
+    oneBlockSize,
+    oneBlockSize,
+    oneBlockSize,
+    oneBlockSize / 5
+  );
+};
+
+createNewPacman();
+gameLoop();
