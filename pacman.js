@@ -6,6 +6,7 @@ class Pacman {
     this.height = height;
     this.speed = speed;
     this.direction = DIRECTION_RIGHT;
+    this.nextDirection = this.direction;
     this.currentFrame = 1;
     this.frameCount = 7;
 
@@ -17,12 +18,23 @@ class Pacman {
   moveProcess() {
     this.changeDirectionIfPosible();
     this.moveForwards();
-    if (this.checkCollision) {
-      this.moveBackwards;
+    if (this.checkCollision()) {
+      this.moveBackwards();
+      return;
     }
   }
 
-  eat() {}
+  eat() {
+    for(let i = 0; i< map.length; i++){
+      for(let j = 0; j< map[0].length; j++){
+        if(map[i][j] == 2 && this.getMapX() == j &&
+        this.getMapY() == i){
+          map[i][j] = 3;
+          score++;
+        }
+      }
+    }
+  }
 
   moveBackwards() {
     switch (this.direction) {
@@ -37,8 +49,6 @@ class Pacman {
         break;
       case DIRECTION_BOTTON:
         this.y -= this.speed;
-        break;
-      default:
         break;
     }
   }
@@ -57,27 +67,38 @@ class Pacman {
       case DIRECTION_BOTTON:
         this.y += this.speed;
         break;
-      default:
-        break;
     }
   }
 
   checkCollision() {
+    let isCollided = false;
     if (
       map[this.getMapY()][this.getMapX()] == 1 ||
       map[this.getMapYRightSide()][this.getMapX()] == 1 ||
       map[this.getMapY()][this.getMapXRightSide()] == 1 ||
       map[this.getMapYRightSide()][this.getMapXRightSide()] == 1
     ) {
-      return true;
+      isCollided = true;
     }
 
-    return false;
+    return isCollided;
   }
 
   checkGhostCollision() {}
 
-  changeDirectionIfPosible() {}
+  changeDirectionIfPosible() {
+    if (this.direction == this.nextDirection) return;
+    
+    let tempDirection = this.direction;
+    this.direction = this.nextDirection;
+    this.moveForwards();
+    if(this.checkCollision()){
+      this.moveBackwards();
+      this.direction = tempDirection;
+    } else{
+      this.moveBackwards();
+    }
+  }
 
   changeAnimation() {
     this.currentFrame =
@@ -102,7 +123,7 @@ class Pacman {
       pacmanFrames,
       (this.currentFrame - 1) * oneBlockSize,
       0,
-      oneBlockSize, 
+      oneBlockSize,
       oneBlockSize,
       this.x,
       this.y,
